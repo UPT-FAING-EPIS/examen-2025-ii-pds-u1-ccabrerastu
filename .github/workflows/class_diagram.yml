@@ -10,19 +10,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install tools
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre graphviz plantuml
-          dotnet tool install --global PlantUmlClassDiagramGenerator
+          dotnet new tool-manifest
+          dotnet tool install PlantUmlClassDiagramGenerator
+          dotnet tool list
 
-      - name: Generate .puml from backend
+      - name: Generate .puml
         run: |
-          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet tool restore
           mkdir -p design/output
-          PlantUmlClassDiagramGenerator backend/Exam.Api -o design/output/classes.puml
+          dotnet PlantUmlClassDiagramGenerator backend/Exam.Api -o design/output/classes.puml
 
-      - name: Convert .puml to PNG
+      - name: Convert to PNG
         run: |
           plantuml -tpng design/output/classes.puml -o design/output
 
