@@ -1,0 +1,57 @@
+name: SonarQube Scan
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore backend/Exam.Api/Exam.Api.csproj
+
+      - name: Run tests with coverage
+        run: |
+          dotnet test backend/Exam.Api.Tests/Exam.Api.Tests.csproj \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover
+
+      - name: Install Sonar Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet sonarscanner begin \
+            /k:"examapp" \
+            /d:sonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            /d:sonar.login=${{ secrets.SONAR_TOKEN }} \
+            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="**/Tests/**"
+
+      - name: Build
+        run: dotnet build backend/Exam.Api/Exam.Api.csproj
+
+      - name: End Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}

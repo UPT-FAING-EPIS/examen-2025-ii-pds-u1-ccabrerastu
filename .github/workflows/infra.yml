@@ -1,0 +1,39 @@
+name: Infra - Terraform
+
+on:
+  push:
+    paths: ['infra/**']
+  workflow_dispatch: {}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      TF_WORKING_DIR: ./infra
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform -chdir=$TF_WORKING_DIR init -input=false
+
+      - name: Terraform Validate
+        run: terraform -chdir=$TF_WORKING_DIR validate
+
+      - name: Terraform Plan
+        run: terraform -chdir=$TF_WORKING_DIR plan -out=tfplan -input=false
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
+
+      - name: Terraform Apply (manual)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform -chdir=$TF_WORKING_DIR apply -auto-approve tfplan

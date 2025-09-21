@@ -1,0 +1,28 @@
+name: Class Diagram
+
+on:
+  push:
+    paths:
+      - 'design/class_diagram.puml'
+
+jobs:
+  plantuml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Java, Graphviz, and PlantUML
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-jre graphviz plantuml
+
+      - name: Generate PNG
+        run: |
+          mkdir -p design/output
+          plantuml -tpng design/class_diagram.puml -o output
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: class-diagram
+          path: design/output
