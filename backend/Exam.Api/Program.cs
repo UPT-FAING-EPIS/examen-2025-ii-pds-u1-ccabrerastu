@@ -4,14 +4,32 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MySQL - usa la cadena de appsettings.json
+// ----------------------------
+// Configuración de MySQL
+// ----------------------------
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Registrar DbContext con ServerVersion auto-detect
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connStr, ServerVersion.AutoDetect(connStr)));
+    options.UseMySql(connStr, ServerVersion.AutoDetect(connStr))
+);
 
+// ----------------------------
+// Habilitar CORS para React
+// ----------------------------
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // tu frontend
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+              //.AllowCredentials(); // habilitar si usas cookies o auth
+    });
+});
+
+// ----------------------------
 // Controllers y Swagger
+// ----------------------------
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -20,11 +38,18 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Exam API",
         Version = "v1",
-        Description = "API para gestionar exámenes y preguntas"
+        Description = "API para gestionar exámenes, preguntas y envíos"
     });
 });
 
 var app = builder.Build();
+
+// ----------------------------
+// Middleware
+// ----------------------------
+
+// Activar CORS antes de los controladores
+app.UseCors();
 
 // Swagger solo en desarrollo
 if (app.Environment.IsDevelopment())
@@ -36,7 +61,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// En desarrollo, puedes comentar HTTPS si React usa HTTP
+// app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
