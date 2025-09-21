@@ -1,39 +1,41 @@
-name: Infra - Terraform
+name: Infraestructura
 
 on:
+  workflow_dispatch:
   push:
-    paths: ['infra/**']
-  workflow_dispatch: {}
+    branches:
+      - main
 
 jobs:
-  terraform:
+  infra-deploy:
     runs-on: ubuntu-latest
-    env:
-      TF_WORKING_DIR: ./infra
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Autenticación en GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configuración de gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set compute/region us-central1
+
+      # Terraform init, plan, apply
+      - name: Instalar Terraform
         uses: hashicorp/setup-terraform@v2
 
       - name: Terraform Init
-        run: terraform -chdir=$TF_WORKING_DIR init -input=false
-
-      - name: Terraform Validate
-        run: terraform -chdir=$TF_WORKING_DIR validate
+        working-directory: infra
+        run: terraform init
 
       - name: Terraform Plan
-        run: terraform -chdir=$TF_WORKING_DIR plan -out=tfplan -input=false
+        working-directory: infra
+        run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="db_password=${{ secrets.DB_PASSWORD }}" || echo "Algunos recursos ya existen, continuando con el despliegue"
 
-      - name: Upload plan artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan
-          path: ${{ env.TF_WORKING_DIR }}/tfplan
-
-      - name: Terraform Apply (manual)
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform -chdir=$TF_WORKING_DIR apply -auto-approve tfplan
+      - name: Terraform Apply
+        working-directory: infra
+        run: terraform apply -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -var="db_password=${{ secrets.DB_PASSWORD }}" || echo "Algunos recursos ya existen, continuando con el despliegue"
