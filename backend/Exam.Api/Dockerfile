@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia el archivo de proyecto y restaura dependencias
+# Copia el archivo de proyecto y restaura dependenciasss
 COPY ["Exam.Api.csproj", "."]
 RUN dotnet restore "Exam.Api.csproj"
 
