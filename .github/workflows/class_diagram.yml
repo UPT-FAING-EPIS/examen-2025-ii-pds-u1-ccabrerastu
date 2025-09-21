@@ -21,19 +21,33 @@ jobs:
           sudo apt-get install -y default-jre graphviz plantuml
           dotnet new tool-manifest --force
           dotnet tool install PlantUmlClassDiagramGenerator --version 1.4.0
-          dotnet tool list
+
+      - name: Create output directory
+        run: |
+          mkdir -p design/output
 
       - name: Generate .puml
         run: |
           dotnet tool restore
-          mkdir -p design/output
-          # Usa directamente el proyecto, sin -p
-          dotnet puml-gen ./backend/Exam.Api/Exam.Api.csproj -o ./design/output
-
+          # Change to backend directory to avoid path issues
+          cd backend/Exam.Api
+          dotnet puml-gen Exam.Api.csproj --output ../../design/output
+          # List generated files for debugging
+          ls -la ../../design/output/
 
       - name: Convert to PNG
         run: |
-          plantuml -tpng design/output/*.puml -o design/output
+          if [ -n "$(ls -A design/output/*.puml 2>/dev/null)" ]; then
+            plantuml -tpng design/output/*.puml -o ${{ github.workspace }}/design/output
+          else
+            echo "No .puml files found to convert"
+            exit 1
+          fi
+
+      - name: List final output
+        run: |
+          echo "Files in design/output:"
+          ls -la design/output/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
