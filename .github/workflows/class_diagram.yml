@@ -27,11 +27,12 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          dotnet puml-gen ./backend/Exam.Api/Exam.Api.csproj -o ./design/output/classes.puml
+          # Usa la ruta correcta y pasa solo la carpeta como destino
+          dotnet puml-gen "./backend/Exam.Api/Exam.Api.csproj" -o "./design/output"
 
       - name: Convert to PNG
         run: |
-          plantuml -tpng design/output/classes.puml -o design/output
+          plantuml -tpng design/output/*.puml -o design/output
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
