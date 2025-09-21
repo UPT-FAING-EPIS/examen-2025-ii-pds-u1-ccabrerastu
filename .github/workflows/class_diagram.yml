@@ -26,14 +26,13 @@ jobs:
         run: |
           mkdir -p design/output
 
-      - name: Generate .puml
+      - name: Generate .puml (Directory Mode)
         run: |
           dotnet tool restore
-          # Change to backend directory to avoid path issues
-          cd backend/Exam.Api
-          dotnet puml-gen Exam.Api.csproj --output ../../design/output
+          # Use directory mode with -dir flag
+          dotnet puml-gen ./backend ./design/output -dir
           # List generated files for debugging
-          ls -la ../../design/output/
+          ls -la design/output/
 
       - name: Convert to PNG
         run: |
