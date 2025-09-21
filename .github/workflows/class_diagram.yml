@@ -10,30 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Instala Java, Graphviz y PlantUML
-      - name: Install Java, Graphviz, and PlantUML
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y default-jre graphviz plantuml
-
-      # Instala PlantUmlClassDiagramGenerator para generar el .puml desde tu backend
-      - name: Install PlantUML Class Diagram Generator
-        run: |
+          sudo apt-get install -y default-jre graphviz
           dotnet tool install --global PlantUmlClassDiagramGenerator
+
+      - name: Generate .puml from backend
+        run: |
           export PATH="$PATH:$HOME/.dotnet/tools"
-
-      # Genera el archivo .puml a partir del código del backend
-      - name: Generate PUML from backend
-        run: |
           mkdir -p design/output
-          PlantUmlClassDiagramGenerator backend/Exam.Api -o design/output/class_diagram.puml
+          PlantUmlClassDiagramGenerator backend/Exam.Api -o design/output/classes.puml
 
-      # Convierte el .puml en PNG
-      - name: Generate PNG
+      - name: Convert .puml to PNG
         run: |
-          plantuml -tpng design/output/class_diagram.puml -o design/output
+          plantuml -tpng design/output/classes.puml -o .
 
-      # Sube el artefacto como resultado del workflow
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
