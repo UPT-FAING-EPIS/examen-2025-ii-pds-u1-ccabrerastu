@@ -1,4 +1,4 @@
-name: Infraestructura Chafa
+name: Infraestructura 
 
 on:
   workflow_dispatch:
