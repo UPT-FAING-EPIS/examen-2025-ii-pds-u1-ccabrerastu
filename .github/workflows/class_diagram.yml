@@ -27,8 +27,8 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          # Alternative syntax - some versions use different parameter names
-          dotnet puml-gen -p "./backend/Exam.Api/Exam.Api.csproj" -o "./design/output/"
+          # Usa directamente el proyecto, sin -p
+          dotnet puml-gen ./backend/Exam.Api/Exam.Api.csproj -o ./design/output
 
 
       - name: Convert to PNG
