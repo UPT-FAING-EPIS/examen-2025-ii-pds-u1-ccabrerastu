@@ -50,5 +50,4 @@ Desarrollar una plataforma web que permita la creación, gestión y realización
 
 ## Final
 1. Responder con la URL de la aplicaciòn desplegada
-2. Responder con la URL del repositorio Github
-Texto de la respuesta Pregunta 1
+2. Responder con la URL del repositorio Github: https://github.com/UPT-FAING-EPIS/examen-2025-ii-pds-u1-ccabrerastu
