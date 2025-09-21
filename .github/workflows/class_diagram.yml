@@ -27,8 +27,9 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          # Use the correct syntax for the tool
-          dotnet puml-gen "./backend/Exam.Api/Exam.Api.csproj" "./design/output/"
+          # Try this syntax instead
+          dotnet puml-gen --project "./backend/Exam.Api/Exam.Api.csproj" --output "./design/output/"
+
 
       - name: Convert to PNG
         run: |
