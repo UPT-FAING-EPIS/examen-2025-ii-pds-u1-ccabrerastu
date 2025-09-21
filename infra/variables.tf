@@ -1,6 +1,7 @@
 variable "project_id" {
   description = "ID del proyecto de Google Cloud"
   type        = string
+  default     = "simulapp-92286" # Usa el ID de tu proyecto por defecto
 }
 
 variable "region" {
@@ -19,7 +20,7 @@ variable "db_password" {
   description = "Contraseña para el usuario de la base de datos"
   type        = string
   sensitive   = true
-  default     = "dummy-password"
+  default     = "dummy-password" # Contraseña de prueba para que no bloquee el plan
 }
 
 variable "environment" {
