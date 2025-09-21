@@ -2,7 +2,7 @@ name: Infra Diagram
 
 on:
   push:
-    paths: ['infra/**', 'design/infra/**']
+    branches: [ main ]
 
 jobs:
   diagram:
