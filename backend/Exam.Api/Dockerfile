@@ -1,18 +1,17 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-
-
+# Etapa de compilación
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["Exam.Api/Exam.Api.csproj", "Exam.Api/"]
-RUN dotnet restore "Exam.Api/Exam.Api.csproj"
+
+# Copia el archivo de proyecto y restaura dependencias
+COPY ["Exam.Api.csproj", "."]
+RUN dotnet restore "Exam.Api.csproj"
+
+# Copia todo el contenido y publica
 COPY . .
-WORKDIR "/src/Exam.Api"
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish "Exam.Api.csproj" -c Release -o /app/publish
 
-
-FROM base AS final
+# Etapa final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Exam.Api.dll"]
