@@ -14,7 +14,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre graphviz plantuml
-          dotnet new tool-manifest
+          dotnet new tool-manifest --force
           dotnet tool install PlantUmlClassDiagramGenerator
           dotnet tool list
 
@@ -22,8 +22,9 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          # Usa el alias correcto: puml-gen
-          dotnet puml-gen backend/Exam.Api/Exam.Api.csproj -o design/output/classes.puml
+          # Usa la ruta completa y verifica que el proyecto existe
+          find . -name "*.csproj" -type f
+          dotnet puml-gen ./backend/Exam.Api/Exam.Api.csproj -o ./design/output/classes.puml --verbose
 
       - name: Convert to PNG
         run: |
