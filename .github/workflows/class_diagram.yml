@@ -10,27 +10,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: | 
-            6.0.x
-            8.0.x
-
-      - name: Install tools
+      - name: Install PlantUML
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre graphviz plantuml
-          dotnet new tool-manifest --force
-          # Buscar versiones disponibles o usar una específica que exista
-          dotnet tool install PlantUmlClassDiagramGenerator --version 1.5.0
-          dotnet tool list
 
-      - name: Generate .puml
+      - name: Generate .puml with Docker
         run: |
-          dotnet tool restore
           mkdir -p design/output
-          dotnet puml-gen ./backend/Exam.Api/Exam.Api.csproj -o ./design/output/classes.puml
+          # Usar el contenedor oficial de PlantUML generator
+          docker run --rm -v $(pwd):/data \
+            plantuml/plantuml-generator:latest \
+            /data/backend/Exam.Api/Exam.Api.csproj \
+            -o /data/design/output/classes.puml
 
       - name: Convert to PNG
         run: |
