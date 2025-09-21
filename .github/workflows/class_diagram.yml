@@ -27,8 +27,8 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          # Usa la ruta correcta y pasa solo la carpeta como destino
-          dotnet puml-gen "./backend/Exam.Api/Exam.Api.csproj" -o "./design/output"
+          # Use the correct syntax for the tool
+          dotnet puml-gen "./backend/Exam.Api/Exam.Api.csproj" "./design/output/"
 
       - name: Convert to PNG
         run: |
