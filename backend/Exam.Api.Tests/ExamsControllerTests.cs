@@ -23,7 +23,7 @@ namespace Exam.Api.Tests
         [Fact]
         public async Task List_ReturnsAllExams()
         {
-            // Arrange
+            // Arrangesss
             using var db = GetInMemoryDb(nameof(List_ReturnsAllExams));
             db.Exams.AddRange(
                 new ExamModel { Id = 1, Title = "Matemáticas", Description = "Álgebra", DurationMinutes = 30 },
