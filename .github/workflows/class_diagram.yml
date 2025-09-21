@@ -2,8 +2,7 @@ name: Class Diagram
 
 on:
   push:
-    paths:
-      - 'design/class_diagram.puml'
+    branches: [ main ]
 
 jobs:
   plantuml:
