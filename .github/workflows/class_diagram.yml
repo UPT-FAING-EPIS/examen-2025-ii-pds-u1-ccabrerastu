@@ -22,7 +22,8 @@ jobs:
         run: |
           dotnet tool restore
           mkdir -p design/output
-          dotnet PlantUmlClassDiagramGenerator backend/Exam.Api -o design/output/classes.puml
+          # Usa el alias correcto: puml-gen
+          dotnet puml-gen backend/Exam.Api -o design/output/classes.puml
 
       - name: Convert to PNG
         run: |
