@@ -1,4 +1,4 @@
-# design/infra/diagram_gen.pyyy
+# design/infra/diagram_gen.pyyyyy
 from diagrams import Diagram, Cluster
 from diagrams.aws.compute import EC2
 from diagrams.aws.database import RDS

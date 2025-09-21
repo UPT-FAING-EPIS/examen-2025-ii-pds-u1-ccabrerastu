@@ -26,7 +26,7 @@ jobs:
           context: ./backend/Exam.Api
           file: ./backend/Exam.Api/Dockerfile
           push: true
-          tags: ${{ secrets.REGISTRY }}/examapp-backend:latest
+          tags: ccabrerastu/examapp-backend:latest
 
   deploy-frontend:
     runs-on: ubuntu-latest
