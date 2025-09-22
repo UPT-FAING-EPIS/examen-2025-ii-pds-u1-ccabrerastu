@@ -49,5 +49,5 @@ Desarrollar una plataforma web que permita la creación, gestión y realización
 9. Crear una automatizaciòn para la creaciòn del release (release.yml)
 
 ## Final
-1. Responder con la URL de la aplicaciòn desplegada
+1. Responder con la URL de la aplicaciòn desplegada: https://examen-2025-ii-pds-u1-ccabrerastu.vercel.app/
 2. Responder con la URL del repositorio Github: https://github.com/UPT-FAING-EPIS/examen-2025-ii-pds-u1-ccabrerastu
